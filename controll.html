@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>التحكم في الطائرة </title>
+	 <meta charset="utf-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
+	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body onkeydown="keyDownLestener(event)" onkeyup="keyUpLestener(event)">
+	<header style=" text-align: center;" >
+		<img src="imgs/rifd_logo.png" style="margin: auto; ">
+	</header>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+			    <div class="thumbnail">
+			      <iframe class="row" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23725.91522039322!2d39.998602048503436!3d21.355109916566924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15e9fd6b657f80a1%3A0x75796408a2d7b040!2z2KzYqNmEINi52LHZgdip!5e0!3m2!1sar!2ssa!4v1533138628782" width="600" height="320" zoom="50" frameborder="0" style="border:0; padding: 2em; padding-right: 4em;" allowfullscreen></iframe>
+			    </div>
+			  </div>
+			  <div class="col-md-6">
+			    <div class="thumbnail">
+			        <img id="stream" src="imgs/streaming.png" alt="streaming" style="width:100%; height: 320px">
+			    </div>
+			  </div>
+		</div>
+	</div>	
+	<div class="glyphicon-qrcode" style="padding:.5em 5em;">
+		<pre style="text-align: right;" >
+			W للتحرك للأمام اضغط حرف 
+			S للتحرك للخف اضغط حرف 
+			D للتحرك لليمين اضغط حرف 
+			A للتحرك لليسار اضغط حرف 
+			لزيادة ارتفاع الطائرة اضغط السعهم للأعلى
+			لتقليل ارتفاع الطائرة اضغط السعهم للأسفل
+			للدوران لليمين اضعط سهم اليمين
+			للدوران لليسار اضعط سهم اليسار
+			لإنزال الحبل اضغط المسافة
+			L للهبوط اضغط على حرف
+			R للعودة للقاعدة اضغط على حرف
+			T للإقلاع اضغط
+		</pre>
+	</div>
+
+
+
+
+
+
+	<!-- <div class="container">
+		<div class="row">
+			<div class="col-md-3">
+				<ul class="list-group" style="float: right;" >
+				  <li class="list-group-item">W للتحرك للأمام اضغط حرف </li>
+				  <li class="list-group-item"> لزيادة ارتفاع الطائرة اضغط السعهم للأعلى</li>
+				  <li class="list-group-item"> L للهبوط اضغط على حرف </li>
+
+				  
+
+				</ul>
+
+			</div>
+
+			<div class="col-md-3">
+				<ul class="list-group" style="float: right;" >
+				  <li class="list-group-item">S للتحرك للخلف اضغط حرف </li>
+				 
+				  <li class="list-group-item"> لتقليل ارتفاع الطائرة اضغط السعهم للأسفل</li>
+				  <li class="list-group-item">R للعودة للقاعدة اضغط على حرف  </li>
+				  
+
+				</ul>
+
+			</div>
+			<div class="col-md-3">
+				<ul class="list-group" style="float: right;" >
+				  <li class="list-group-item">A للتحرك لليسار اضغط حرف </li>
+				  
+				  <li class="list-group-item">للدوران لليمين اضعط سهم اليمين</li>
+				  <li class="list-group-item">T للإقلاع اضغط </li>
+
+				</ul>
+
+			</div>
+			<div class="col-md-3">
+				<ul class="list-group" style="float: right;" >
+				  <li class="list-group-item">D للتحرك لليمين اضغط حرف </li>
+				  
+				  <li class="list-group-item">للدوران لليسار اضعط سهم اليسار</li>
+				  <li class="list-group-item">لإنزال الحبل اضغط المسافة</li>
+
+				</ul>
+
+			</div>
+
+
+		</div>
+		
+	</div> -->
+
+
+<script type="text/javascript">
+	var img = document.getElementById('stream');
+	var streamurl = 'ws://172.16.62.1:1114/';
+	var streamingWS = new WebSocket(streamurl);
+
+    streamingWS.onopen = function(evt) { streamingWSonOpen(evt) };
+    streamingWS.onclose = function(evt) { streamingWSonClose(evt) };
+    streamingWS.onmessage = function(evt) { streamingWSonMessage(evt) };
+    streamingWS.onerror = function(evt) { streamingWSonError(evt) };
+
+  function streamingWSonOpen(evt)
+	  {
+	    alert("open")
+	    streamingWS.send("");
+	  }
+
+  function streamingWSonClose(evt)
+	  {
+	    console.log("DISCONNECTED");
+	  }
+
+  function streamingWSonMessage(evt)
+	  {
+	  	//alert("adsf")
+	  	if (evt != null) {
+	  	msg = JSON.parse(evt.data);
+	  	console.log(msg.header);
+	  	// header = JSON.parse(msg.header);
+	  	// console.log(header);
+	  	if(msg.header== "5")
+	  	{
+	  	data = msg.data;
+	    img.src = 'data:image/jpg; base64,' + data ;
+	    streamingWS.send("");
+    	}
+    	var s = setTimeout(streamingWSonMessage, 50);
+    	streamingWS.send("");
+	  	}
+	  }
+
+  function streamingWSonError(evt)
+	  {
+	    console.log( evt.data);
+	  }
+
+
+	var ax=0,ay=0,az=0,lx=0,ly=0,lz=0;	  
+	var cmdWS = new WebSocket('ws://172.16.62.1:1111/');
+
+	cmdWS.onopen = function(evt) { cmdWSonOpen(evt) };
+    cmdWS.onclose = function(evt) { cmdWSonClose(evt) };
+    cmdWS.onmessage = function(evt) { cmdWSonMessage(evt) };
+    cmdWS.onerror = function(evt) { cmdWSonError(evt) };
+
+  function cmdWSonOpen(evt)
+	  {
+	    alert("open cmdWS")
+	  }
+
+  function cmdWSonClose(evt)
+	  {
+	    console.log("DISCONNECTED");
+	  }
+
+  function cmdWSonMessage(evt)
+	  {
+	  	console.log("cmdWS msg: ",evt.data)
+	  }
+
+  function cmdWSonError(evt)
+	  {
+	    console.log( evt.data);
+	  }
+
+function keyDownLestener(event) {
+    var key = event.which || event.keyCode;
+    if(key==32){
+    	cmd={
+    		header: "1",
+    	}
+		cmdWS.send(JSON.stringify(cmd));
+
+    }else if(key==84){
+    	cmd={
+    		header: "2"
+    	}
+		cmdWS.send(JSON.stringify(cmd));
+    }else if (key!=null){
+	    switch(key) {
+		    case 65:
+		        lx=-1;
+		        break;
+		    case 83:
+		        ly=-1;
+		        break;
+		    case 68:
+		        lx=1;
+		        break;
+		    case 87:
+		        ly=1;
+		        break;
+		    case 40:
+		        lz=-1;
+		        break;
+		    case 38:
+		        lz=1;
+		        break;
+		    case 37:
+		        az=-3;
+		        break;
+		    case 39:
+		        az=3;
+		        break;
+		}
+		cmd_vel= {
+			header:"3",
+			ax:ax,
+			ay:ay,
+			az:az,
+			lx:lx,
+			ly:ly,
+			lz:lz
+		}
+		cmdWS.send(JSON.stringify(cmd_vel));
+
+	}
+   
+}
+
+function keyUpLestener(event) {
+    var key = event.which || event.keyCode;
+    
+    if(key==32){
+    	//land
+    }else if(key==84){
+    	//takeoff
+    }else if(key!=null){
+	    switch(key) {
+		    case 65:
+		        lx=0;
+		        break;
+		    case 83:
+		        ly=0;
+		        break;
+		    case 68:
+		        lx=0;
+		        break;
+		    case 87:
+		        ly=0;
+		        break;
+		    case 40:
+		        lz=0;
+		        break;
+		    case 38:
+		        lz=0;
+		        break;
+		    case 37:
+		        az=0;
+		        break;
+		    case 39:
+		        az=0;
+		        break;
+		}
+		cmd_vel= {
+			header:"3",
+			ax:ax,
+			ay:ay,
+			az:az,
+			lx:lx,
+			ly:ly,
+			lz:lz
+		}
+		cmdWS.send(JSON.stringify(cmd_vel));
+
+	}
+   
+}
+
+
+</script>
+</body>
+</html>
